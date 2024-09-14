@@ -1,11 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
 const DashCourses = () => {
-  const data = [
-    { firstname: "John", lastname: "Doe", state: "California", email: "john@example.com" },
-    { firstname: "Jane", lastname: "Smith", state: "New York", email: "jane@example.com" },
-    { firstname: "Chris", lastname: "Johnson", state: "Texas", email: "chris@example.com" },
-  ];
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/admission/find');
+        const data = await response.data;
+
+        if (Array.isArray(data)) {
+          setStudents(data);
+        } else {
+          alert('Not Students yet')
+          // console.error('Expected an array but got', data);
+        }
+      } catch (error) {
+        // console.error('Error fetching data:', error);
+        alert('Server could not fetch details right now')
+      }
+    }
+    fetchStudents();
+  }, []);
+
+  const handleAccept = async () => {
+    try {
+      const response = await axios.put("http://localhost:5000/admission/candidate/:id/accept")
+      if (response.status === 200) {
+        alert('Candidate has been successfully accepted');
+      }
+    } catch (error) {
+      alert('Server error, please try again')
+    }
+  }
+  const handleReject = async () => {
+    try {
+      const response = await axios.delete("http://localhost:5000/admission/delete/:id")
+      if (response.status === 200) {
+        alert('Candidate has been deleted successfully')
+      }
+    } catch (error) {
+      alert('Server error, please try again')
+    }
+  }
 
   return (
     <>
@@ -25,17 +63,17 @@ const DashCourses = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((person, index) => (
+              {students.map((student, index) => (
                 <tr key={index} className="border-t hover:bg-gray-50">
-                  <td className="p-4">{person.firstname}</td>
-                  <td className="p-4">{person.lastname}</td>
-                  <td className="p-4">{person.state}</td>
-                  <td className="p-4">{person.email}</td>
+                  <td className="p-4">{student.firstname}</td>
+                  <td className="p-4">{student.lastname}</td>
+                  <td className="p-4">{student.state}</td>
+                  <td className="p-4">{student.email}</td>
                   <td className="p-4 space-x-2">
-                    <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                    <button onClick={handleAccept} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                       Accept
                     </button>
-                    <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                    <button onClick={handleReject} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                       Reject
                     </button>
                   </td>
@@ -46,17 +84,17 @@ const DashCourses = () => {
 
           {/* Mobile Responsive View */}
           <div className="grid grid-cols-1 gap-4 md:hidden">
-            {data.map((person, index) => (
+            {students.map((student, index) => (
               <div key={index} className="bg-white border border-gray-300 rounded-lg shadow-md p-4">
-                <p className="font-bold text-gray-700">Firstname: <span className="font-normal">{person.firstname}</span></p>
-                <p className="font-bold text-gray-700">Lastname: <span className="font-normal">{person.lastname}</span></p>
-                <p className="font-bold text-gray-700">State: <span className="font-normal">{person.state}</span></p>
-                <p className="font-bold text-gray-700">Email: <span className="font-normal">{person.email}</span></p>
+                <p className="font-bold text-gray-700">Firstname: <span className="font-normal">{student.firstname}</span></p>
+                <p className="font-bold text-gray-700">Lastname: <span className="font-normal">{student.lastname}</span></p>
+                <p className="font-bold text-gray-700">State: <span className="font-normal">{student.state}</span></p>
+                <p className="font-bold text-gray-700">Email: <span className="font-normal">{student.email}</span></p>
                 <div className="mt-4 space-x-2">
-                  <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                  <button onClick={handleAccept} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
                     Accept
                   </button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                  <button onClick={handleReject} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                     Reject
                   </button>
                 </div>

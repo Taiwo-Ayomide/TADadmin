@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 
 const DashGrade = () => {
-  const data = [
-    { firstname: "John", lastname: "Doe", state: "California", email: "john@example.com" },
-    { firstname: "Jane", lastname: "Smith", state: "New York", email: "jane@example.com" },
-    { firstname: "Chris", lastname: "Johnson", state: "Texas", email: "chris@example.com" },
-  ];
+
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/admission/candidates/admitted');
+        const data = await response.data;
+
+        if (Array.isArray(data)) {
+          setStudents(data);
+        } else {
+          alert('No student yet')
+          // console.error('Expected an array but got', data);
+        }
+      } catch (error) {
+        // console.error('Error fetching data:', error);
+        alert('Server could not fetch details right now')
+      }
+    }
+    fetchStudents();
+  }, []);
+
 
   return (
     <>
@@ -24,12 +43,12 @@ const DashGrade = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map((person, index) => (
+              {students.map((student, index) => (
                 <tr key={index} className="border-t hover:bg-gray-50">
-                  <td className="p-4">{person.firstname}</td>
-                  <td className="p-4">{person.lastname}</td>
-                  <td className="p-4">{person.state}</td>
-                  <td className="p-4">{person.email}</td>
+                  <td className="p-4">{student.firstname}</td>
+                  <td className="p-4">{student.lastname}</td>
+                  <td className="p-4">{student.state}</td>
+                  <td className="p-4">{student.email}</td>
                 </tr>
               ))}
             </tbody>
@@ -37,12 +56,12 @@ const DashGrade = () => {
 
           {/* Mobile Responsive View */}
           <div className="grid grid-cols-1 gap-4 md:hidden">
-            {data.map((person, index) => (
+            {students.map((student, index) => (
               <div key={index} className="bg-white border border-gray-300 rounded-lg shadow-md p-4">
-                <p className="font-bold text-gray-700">Firstname: <span className="font-normal">{person.firstname}</span></p>
-                <p className="font-bold text-gray-700">Lastname: <span className="font-normal">{person.lastname}</span></p>
-                <p className="font-bold text-gray-700">State: <span className="font-normal">{person.state}</span></p>
-                <p className="font-bold text-gray-700">Email: <span className="font-normal">{person.email}</span></p>
+                <p className="font-bold text-gray-700">Firstname: <span className="font-normal">{student.firstname}</span></p>
+                <p className="font-bold text-gray-700">Lastname: <span className="font-normal">{student.lastname}</span></p>
+                <p className="font-bold text-gray-700">State: <span className="font-normal">{student.state}</span></p>
+                <p className="font-bold text-gray-700">Email: <span className="font-normal">{student.email}</span></p>
               </div>
             ))}
           </div>
