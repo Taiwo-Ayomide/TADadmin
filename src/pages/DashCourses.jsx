@@ -7,7 +7,7 @@ const DashCourses = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/admission/find');
+        const response = await axios.get('https://tadbackend.onrender.com/admission/find');
         const data = await response.data;
 
         if (Array.isArray(data)) {
@@ -26,7 +26,7 @@ const DashCourses = () => {
 
   const handleAccept = async () => {
     try {
-      const response = await axios.put("http://localhost:5000/admission/candidate/:id/accept")
+      const response = await axios.put("https://tadbackend.onrender.com/admission/candidate/:id/accept")
       if (response.status === 200) {
         alert('Candidate has been successfully accepted');
       }
@@ -36,7 +36,7 @@ const DashCourses = () => {
   }
   const handleReject = async () => {
     try {
-      const response = await axios.delete("http://localhost:5000/admission/delete/:id")
+      const response = await axios.delete("https://tadbackend.onrender.com/admission/delete/:id")
       if (response.status === 200) {
         alert('Candidate has been deleted successfully')
       }
